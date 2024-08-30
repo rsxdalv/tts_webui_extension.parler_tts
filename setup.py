@@ -1,17 +1,18 @@
-
 import setuptools
 
 setuptools.setup(
-	name="extension_xtts_simple",
+    name="extension_parler_tts",
     packages=setuptools.find_namespace_packages(),
-	version="0.0.1",
-	author="rsxdalv",
-	description="XTTS-RVC-UI is a Gradio UI for XTTSv2",
-	url="https://github.com/rsxdalv/extension_xtts_rvc_ui",
+    version="0.0.1",
+    author="rsxdalv",
+    description="Parler TTS",
+    url="https://github.com/rsxdalv/extension_parler_tts",
     project_urls={},
     scripts=[],
     install_requires=[
-        "coqui-tts",
+        "git+https://github.com/huggingface/parler-tts.git",
+        # "transformers==4.43.3",
+        # "numpy==1.24.4",
     ],
     classifiers=[
         "Programming Language :: Python :: 3",
