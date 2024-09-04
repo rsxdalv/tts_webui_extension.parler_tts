@@ -150,16 +150,17 @@ def main_ui():
         with gr.Column():
             parler_tts_params = parler_tts_params_ui()
 
-            seed, randomize_seed_callback = randomize_seed_ui()
+            with gr.Row():
+                model_name = model_select_ui(
+                    [
+                        ("Parler-TTS Mini v1", repo_id),
+                        ("Parler-TTS Large v1", repo_id_large),
+                    ],
+                    LOCAL_MODEL_DIR_ABS,
+                    "parler_tts",
+                )
+                seed, randomize_seed_callback = randomize_seed_ui()
 
-            model_name = model_select_ui(
-                [
-                    ("Parler-TTS Mini v1", repo_id),
-                    ("Parler-TTS Large v1", repo_id_large),
-                ],
-                LOCAL_MODEL_DIR_ABS,
-                "parler_tts",
-            )
 
             attn_implementation = gr.Dropdown(
                 choices=["eager", "sdpa", "flash_attention_2"],
