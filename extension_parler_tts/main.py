@@ -53,7 +53,6 @@ feature_extractor = AutoFeatureExtractor.from_pretrained(repo_id)
 SAMPLE_RATE = feature_extractor.sampling_rate
 
 LOCAL_DIR = os.path.join("data", "models", "parler_tts")
-LOCAL_MODEL_DIR_ABS = get_path_from_root("data", "models", "parler_tts")
 LOCAL_MODEL_DIR = os.path.join(LOCAL_DIR, "cache")
 
 
@@ -156,7 +155,6 @@ def main_ui():
                         ("Parler-TTS Mini v1", repo_id),
                         ("Parler-TTS Large v1", repo_id_large),
                     ],
-                    LOCAL_MODEL_DIR_ABS,
                     "parler_tts",
                 )
                 seed, randomize_seed_callback = randomize_seed_ui()
