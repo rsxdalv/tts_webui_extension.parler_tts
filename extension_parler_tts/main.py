@@ -29,7 +29,7 @@ def extension__tts_generation_webui():
     return {
         "package_name": "extension_parler_tts",
         "name": "Parler-TTS",
-        "version": "0.0.1",
+        "version": "0.0.4",
         "requirements": "git+https://github.com/rsxdalv/extension_parler_tts@main",
         "description": "Parler-TTS is a training and inference library for high-fidelity text-to-speech (TTS) models.",
         "extension_type": "interface",
@@ -54,6 +54,8 @@ SAMPLE_RATE = feature_extractor.sampling_rate
 
 LOCAL_DIR = os.path.join("data", "models", "parler_tts")
 LOCAL_MODEL_DIR = os.path.join(LOCAL_DIR, "cache")
+
+os.makedirs(LOCAL_MODEL_DIR, exist_ok=True)
 
 
 @manage_model_state(model_namespace="parler_tts")
@@ -158,7 +160,6 @@ def main_ui():
                     "parler_tts",
                 )
                 seed, randomize_seed_callback = randomize_seed_ui()
-
 
             attn_implementation = gr.Dropdown(
                 choices=["eager", "sdpa", "flash_attention_2"],
