@@ -29,7 +29,7 @@ def extension__tts_generation_webui():
     return {
         "package_name": "extension_parler_tts",
         "name": "Parler-TTS",
-        "version": "0.0.4",
+        "version": "0.0.5",
         "requirements": "git+https://github.com/rsxdalv/extension_parler_tts@main",
         "description": "Parler-TTS is a training and inference library for high-fidelity text-to-speech (TTS) models.",
         "extension_type": "interface",
@@ -164,13 +164,13 @@ def main_ui():
             attn_implementation = gr.Dropdown(
                 choices=["eager", "sdpa", "flash_attention_2"],
                 label="Attention Implementation",
-                value="sdpa",
+                value="eager",
             )
 
             compile_mode = gr.Dropdown(
                 choices=[("None", None), "default", "reduce-overhead"],
                 label="Compile Mode",
-                value=None,
+                value="None",
             )
 
             unload_model_button("parler_tts")
