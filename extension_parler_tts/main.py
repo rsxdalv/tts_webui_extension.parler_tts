@@ -29,7 +29,6 @@ def extension__tts_generation_webui():
     return {
         "package_name": "extension_parler_tts",
         "name": "Parler-TTS",
-        "version": "0.0.5",
         "requirements": "git+https://github.com/rsxdalv/extension_parler_tts@main",
         "description": "Parler-TTS is a training and inference library for high-fidelity text-to-speech (TTS) models.",
         "extension_type": "interface",
@@ -69,6 +68,7 @@ def get_parler_tts_model(
         cache_dir=LOCAL_MODEL_DIR,
         attn_implementation=attn_implementation,
         # attn_implementation = "eager" # "sdpa" or "flash_attention_2"
+        revision= "refs/pr/9" if model_name == repo_id_large else None,
     ).to(device)
 
     if compile_mode is not None:
@@ -136,31 +136,65 @@ def parler_tts_params_ui():
     return {text: "text", description: "description"}
 
 
+version = "0.2.2"
+
+
 def main_ui():
     gr.Markdown(
-        """
-        # Parler-TTS
+        f"""
+        # Parler-TTS {version}
         Parler-TTS is a training and inference library for high-fidelity text-to-speech (TTS) models.
 
-        
         More models can be found at: https://huggingface.co/models?filter=parler_tts
+
+        Parler-TTS Large v1 has many issues, and is not recommended for use.
         """
     )
 
+    with gr.Row():
+        inner_ui()
+
+
+def inner_ui():
     with gr.Column():
-        with gr.Column():
-            parler_tts_params = parler_tts_params_ui()
+        parler_tts_params = parler_tts_params_ui()
+        generate_button = gr.Button("Generate Audio", variant="primary")
 
-            with gr.Row():
-                model_name = model_select_ui(
-                    [
-                        ("Parler-TTS Mini v1", repo_id),
-                        ("Parler-TTS Large v1", repo_id_large),
-                    ],
-                    "parler_tts",
-                )
-                seed, randomize_seed_callback = randomize_seed_ui()
+        # with gr.Column():
+        model_name = model_select_ui(
+            [
+                ("Parler-TTS Mini v1", repo_id),
+                ("Parler-TTS Large v1", repo_id_large),
+            ],
+            "parler_tts",
+        )
 
+
+        # reload import randomize_seed_ui
+        import importlib
+
+        import tts_webui.utils.randomize_seed
+
+        importlib.reload(tts_webui.utils.randomize_seed)
+        from tts_webui.utils.randomize_seed import randomize_seed_ui
+        seed, randomize_seed_callback = randomize_seed_ui()
+
+        with gr.Row(
+            variant="default",
+            elem_classes=[
+                # "bg-black-300",
+                # align end
+                # "justify-end",
+                # "items-center justify-end",
+                # "!items-end",
+                "items-end",
+            ]
+        ):
+            seed_input = gr.Textbox(label="Seed", value="-1")
+            randomize_seed_checkbox = gr.Checkbox(label="Randomize seed", value=True)
+
+
+        with gr.Row():
             attn_implementation = gr.Dropdown(
                 choices=["eager", "sdpa", "flash_attention_2"],
                 label="Attention Implementation",
@@ -170,19 +204,23 @@ def main_ui():
             compile_mode = gr.Dropdown(
                 choices=[("None", None), "default", "reduce-overhead"],
                 label="Compile Mode",
-                value="None",
+                elem_classes=[
+                    "bg-blue-100",
+                    "text-black",
+                    "font-mono",
+                    "text-xs",
+                    "p-0.5",
+                    "rounded-md",
+                    "height-10",
+                ]
             )
 
-            unload_model_button("parler_tts")
+        unload_model_button("parler_tts")
 
-        with gr.Column():
-            audio_out = gr.Audio(
-                label="Parler-TTS generation", type="numpy", elem_id="audio_out"
-            )
+    with gr.Column():
+        audio_out = gr.Audio(label="Parler-TTS generation", type="numpy")
 
-    gr.Button("Generate Audio", variant="primary").click(
-        **randomize_seed_callback
-    ).then(
+    generate_button.click(**randomize_seed_callback).then(
         **dictionarize(
             fn=generate_parler_tts,
             inputs={
