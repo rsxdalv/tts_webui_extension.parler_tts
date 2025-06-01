@@ -42,6 +42,18 @@ def extension__tts_generation_webui():
     }
 
 
+def verify_transformers_version():
+    try:
+        import transformers
+
+        version = transformers.__version__
+        if version != "4.46.1":
+            return False
+        return True
+    except Exception:
+        return False
+
+
 device = "cuda:0" if torch.cuda.is_available() else "cpu"
 
 
@@ -68,7 +80,7 @@ def get_parler_tts_model(
         cache_dir=LOCAL_MODEL_DIR,
         attn_implementation=attn_implementation,
         # attn_implementation = "eager" # "sdpa" or "flash_attention_2"
-        revision= "refs/pr/9" if model_name == repo_id_large else None,
+        revision="refs/pr/9" if model_name == repo_id_large else None,
     ).to(device)
 
     if compile_mode is not None:
@@ -148,6 +160,10 @@ def main_ui():
         More models can be found at: https://huggingface.co/models?filter=parler_tts
 
         Parler-TTS Large v1 has many issues, and is not recommended for use.
+
+        Parler requires transformers==4.46.1: {"OK" if verify_transformers_version() else "NOT OK"}
+
+        Download models using the Tools>Model Downloader. Then click refresh next to the model selector.
         """
     )
 
@@ -169,7 +185,6 @@ def inner_ui():
             "parler_tts",
         )
 
-
         # reload import randomize_seed_ui
         import importlib
 
@@ -177,6 +192,7 @@ def inner_ui():
 
         importlib.reload(tts_webui.utils.randomize_seed)
         from tts_webui.utils.randomize_seed import randomize_seed_ui
+
         seed, randomize_seed_callback = randomize_seed_ui()
 
         with gr.Row(
@@ -188,11 +204,10 @@ def inner_ui():
                 # "items-center justify-end",
                 # "!items-end",
                 "items-end",
-            ]
+            ],
         ):
             seed_input = gr.Textbox(label="Seed", value="-1")
             randomize_seed_checkbox = gr.Checkbox(label="Randomize seed", value=True)
-
 
         with gr.Row():
             attn_implementation = gr.Dropdown(
@@ -212,7 +227,7 @@ def inner_ui():
                     "p-0.5",
                     "rounded-md",
                     "height-10",
-                ]
+                ],
             )
 
         unload_model_button("parler_tts")
