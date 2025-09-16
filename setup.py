@@ -1,12 +1,12 @@
 import setuptools
 
 setuptools.setup(
-    name="extension_parler_tts",
+    name="tts_webui_extension.parler_tts",
     packages=setuptools.find_namespace_packages(),
     version="0.2.0",
     author="rsxdalv",
     description="Parler-TTS is a training and inference library for high-fidelity text-to-speech (TTS) models.",
-    url="https://github.com/rsxdalv/extension_parler_tts",
+    url="https://github.com/rsxdalv/tts_webui_extension.parler_tts",
     project_urls={},
     scripts=[],
     install_requires=[
@@ -20,3 +20,4 @@ setuptools.setup(
         "Operating System :: OS Independent",
     ],
 )
+
