@@ -22,6 +22,9 @@ from .api import tts
 
 def extension__tts_generation_webui():
     main_ui()
+    from .openai_api_adapter import register
+
+    register()
     return {
         "package_name": "extension_parler_tts",
         "name": "Parler-TTS",
